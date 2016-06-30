@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.DestinationDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.Destination" >
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="destination_name" property="destinationName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="country_id" property="countryId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="state_id" property="stateId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+  </resultMap>
+  
+  <resultMap id="DestinationMVO" type="com.cristik.modules.test.entity.mvo.DestinationMVO" extends="BaseResultMap">
+    <result column="country" property="country" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="state" property="state" jdbcType="VARCHAR" javaType="java.lang.String" />
+  </resultMap>
+
+  <select id="queryPage" parameterType="map" resultMap="DestinationMVO">
+    SELECT
+	  t.*, a.area_name AS "state",b.area_name as "country"
+    FROM
+        destination t
+    LEFT JOIN area a ON t.state_id = a.id
+    left join area b on t.country_id = b.id
+    <where>
+        <if test="destinationMVO.destinationName!=null and destinationMVO.destinationName!=''">
+            and t.destination_name like concat("%",#{destinationMVO.destinationName,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="destinationMVO.country!=null and destinationMVO.country!=''">
+            and b.area_name like concat("%",#{destinationMVO.country,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="destinationMVO.countryId!=null">
+            and b.id = #{destinationMVO.countryId,jdbcType=INTEGER}
+        </if>
+        <if test="destinationMVO.stateId!=null">
+            and a.id = #{destinationMVO.stateId,jdbcType=INTEGER}
+        </if>
+        <if test="destinationMVO.status!=null">
+            and t.status = #{destinationMVO.status,jdbcType=INTEGER}
+        </if>
+    </where>
+    limit #{start},#{length}
+  </select>
+
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer">
+    SELECT
+    count(*)
+    FROM
+    destination t
+    LEFT JOIN area a ON t.state_id = a.id
+    left join area b on t.country_id = b.id
+    <where>
+        <if test="destinationMVO.destinationName!=null and destinationMVO.destinationName!=''">
+            and t.destination_name like concat("%",#{destinationMVO.destinationName,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="destinationMVO.country!=null and destinationMVO.country!=''">
+            and b.area_name like concat("%",#{destinationMVO.country,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="destinationMVO.countryId!=null">
+            and b.id = #{destinationMVO.countryId,jdbcType=INTEGER}
+        </if>
+        <if test="destinationMVO.stateId!=null">
+            and a.id = #{destinationMVO.stateId,jdbcType=INTEGER}
+        </if>
+        <if test="destinationMVO.status!=null">
+            and t.status = #{destinationMVO.status,jdbcType=INTEGER}
+        </if>
+    </where>
+  </select>
+
+  <select id="getDestinationById" parameterType="integer" resultMap="DestinationMVO">
+      SELECT
+      t.*, a.area_name AS "state",b.area_name as "country"
+      FROM
+      destination t
+      LEFT JOIN area a ON t.state_id = a.id
+      left join area b on t.country_id = b.id
+      <where>
+        t.id = #{value,jdbcType=INTEGER}
+      </where>
+  </select>
+  
+</mapper>

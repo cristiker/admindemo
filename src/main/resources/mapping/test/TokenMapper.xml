@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.TokenDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.Token" >
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="user_id" property="userId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="user_type" property="userType" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="token" property="token" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="exp_time" property="expTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+  </resultMap>
+</mapper>

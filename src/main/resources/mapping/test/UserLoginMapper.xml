@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cristik.modules.test.dao.UserLoginDao">
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.UserLogin">
+    <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="email" property="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="password" property="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" javaType="java.lang.String" />
+    <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+  </resultMap>
+  <update id="updateStatusByLoginName" parameterType="com.cristik.modules.test.entity.svo.UserLogin">
+    update user_login
+    <set>
+      status=#{status,jdbcType=INTEGER}
+    </set>
+    <where>
+      login_name = #{loginName,jdbcType=VARCHAR}
+    </where>
+  </update>
+
+  <select id="findRoles" parameterType="String" resultType="java.lang.String">
+    SELECT
+    r.role_code
+    FROM
+        user_login u
+    LEFT JOIN user_role ur ON u.id = ur.login_id
+    LEFT JOIN role r ON ur.role_id = r.id
+    WHERE
+        u.login_name = #{value};
+  </select>
+
+
+</mapper>

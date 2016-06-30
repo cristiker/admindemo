@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.SightDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.Sight" >
+      <result column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="sight_name" property="sightName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="destination_id" property="destinationId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="address" property="address" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="sight_img" property="sightImg" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="guide_id" property="guideId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <result column="summary" property="summary" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+  </resultMap>
+  
+  <resultMap id="SightMVO" type="com.cristik.modules.test.entity.mvo.SightMVO" extends="BaseResultMap">
+      <result column="destination_name" property="destinationName" jdbcType="VARCHAR" javaType="java.lang.String"/>
+  </resultMap>
+
+  <!-- 分页查询数据 -->
+  <select id="queryPage" parameterType="map" resultMap="SightMVO">
+    SELECT
+	t.*, d.destination_name
+    FROM
+    sight t
+    LEFT JOIN destination d ON t.destination_id = d.id
+    <where>
+      <if test="sight.sightName!=null and sight.sightName!=''">
+        and t.sight_name like concat("%",#{sight.sightName,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="sight.address!=null and sight.address!=''">
+        and t.address like concat("%",#{sight.address,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="sight.type!=null">
+        and t.type = #{sight.type,jdbcType=INTEGER}
+      </if>
+      <if test="sight.guideId!=null">
+        and t.guide_id = #{sight.guideId,jdbcType=INTEGER}
+      </if>
+      <if test="sight.status!=null">
+        and t.status = #{sight.status,jdbcType=INTEGER}
+      </if>
+    </where>
+    limit #{start},#{length}
+  </select>
+
+  <!-- 分页查询记录数 -->
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM
+    sight t
+    LEFT JOIN destination d ON t.destination_id = d.id
+    <where>
+      <if test="sight.sightName!=null and sight.sightName!=''">
+        and t.sight_name like concat("%",#{sight.sightName,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="sight.address!=null and sight.address!=''">
+        and t.address like concat("%",#{sight.address,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="sight.type!=null">
+        and t.type = #{sight.type,jdbcType=INTEGER}
+      </if>
+      <if test="sight.guideId!=null">
+        and t.guide_id = #{sight.guideId,jdbcType=INTEGER}
+      </if>
+      <if test="sight.status!=null">
+        and t.status = #{sight.status,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据ID查询景点 -->
+  <select id="getSightById" parameterType="integer" resultMap="SightMVO">
+    SELECT
+    t.*, d.destination_name
+    FROM
+    sight t
+    LEFT JOIN destination d ON t.destination_id = d.id
+    <where>
+      <if test="sight.id!=null">
+        and t.id = #{value,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+  
+
+</mapper>

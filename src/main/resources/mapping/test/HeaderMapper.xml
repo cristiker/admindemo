@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.HeaderDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.Header" >
+      <id column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="head_img" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <result column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.UserDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.User" >
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="name" property="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+      <result column="user_name" property="userName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="user_image" property="userImage" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="email" property="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="phone" property="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="sex" property="sex" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="age" property="age" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="status" property="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+  </resultMap>
+
+  <select id="queryPage" parameterType="map" resultMap="BaseResultMap">
+    select * from user
+    <where>
+        <if test="user.userName!=null and user.userName!='' ">
+            and user_name like concat("%",#{user.userName,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="user.email!=null and user.email!='' ">
+            and email like concat("%",#{user.email,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="user.status!=null">
+            and status = #{user.status,jdbcType=INTEGER}
+        </if>
+    </where>
+      limit #{start},#{length}
+  </select>
+
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer">
+    select count(*) from user
+      <where>
+          <if test="user.userName!=null and user.userName!='' ">
+              and user_name like concat("%",#{user.userName,jdbcType=VARCHAR},"%")
+          </if>
+          <if test="user.email!=null and user.email!='' ">
+              and email like concat("%",#{user.email,jdbcType=VARCHAR},"%")
+          </if>
+          <if test="user.status!=null">
+              and status = #{user.status,jdbcType=INTEGER}
+          </if>
+      </where>
+  </select>
+
+  <select id="search" resultMap="BaseResultMap">
+    select * from user
+      <where>
+          <if test="userName!=null and userName!='' ">
+              and user_name like concat("%",#{userName,jdbcType=VARCHAR},"%")
+          </if>
+          <if test="email!=null and email!='' ">
+              and email like concat("%",#{email,jdbcType=VARCHAR},"%")
+          </if>
+          <if test="status!=null">
+              and status = #{status,jdbcType=INTEGER}
+          </if>
+      </where>
+  </select>
+
+</mapper>

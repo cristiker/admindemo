@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cristik.modules.test.dao.SignatureDao">
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.test.Signature">
+      <id column="secret_id" property="secretId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="secret_key" property="secretKey" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="user_id" property="userId" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="insertSignature" parameterType="com.cristik.modules.test.entity.test.Signature" useGeneratedKeys="true">
+    <selectKey keyProperty="secretId" order="AFTER" resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into signature (secret_key, user_id)
+    values ( #{secretKey,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR})
+  </insert>
+
+</mapper>

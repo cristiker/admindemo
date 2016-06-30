@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+	<!--引入路径配置文件-->
+	<bean id="urlPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="fileEncoding" value="utf-8" />
+		<property name="order" value="3"/>
+		<property name="locations" value="classpath:url.properties" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
+	<!-- 默认的注解映射的支持，org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="com.cristik.common.spring.converters.UTF8StringHttpMessageConverter"/>
+		</mvc:message-converters>
+		<!--<mvc:argument-resolvers>
+			<bean class="com.cristik.framework.spring.resolvers.CustomArgumentResolver"/>
+		</mvc:argument-resolvers>
+		<mvc:return-value-handlers>
+			<bean class="com.cristik.framework.spring.resolvers.CustomReturnValueHandler"/>
+		</mvc:return-value-handlers>-->
+	</mvc:annotation-driven>
+
+	<!--AOP使用cglib代理-->
+	<aop:aspectj-autoproxy  proxy-target-class="true"/>
+
+	<!-- 扫描包名注册bean -->
+	<context:component-scan base-package="com.cristik.modules.test.controller;com.cristik.modules.api.action">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 扫描拦需要的截器 -->
+	<context:component-scan base-package="com.cristik.common.interceptor"/>
+
+	<!-- 定义视图文件解析 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+	<!-- 静态资源映射cache-period指让浏览器缓存的时间 -->
+   	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" cache-period="31536000"/>
+	
+	<!-- 拦截器配置，拦截顺序：先执行后定义的，排在第一位的最后执行。-->
+	<mvc:interceptors>
+		<!-- 非API方法通过拦截器设置应用名引用${base}-->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<!--<mvc:exclude-mapping path="/api/**"/>-->
+			<bean class="com.cristik.common.interceptor.SystemInterceptor"/>
+		</mvc:interceptor>
+
+		<!--自定义API接口token认证-->
+		<!--<mvc:interceptor>
+			<mvc:mapping path="/api/**"/>
+			<mvc:exclude-mapping path="/api/v1/tokens"/>
+			<bean class="com.cristik.framework.interceptor.APIInterceptor"/>
+		</mvc:interceptor>-->
+		<!--菜单显示-->
+		<!--<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.cristik.framework.interceptor.MenuInterceptor"/>
+		</mvc:interceptor>-->
+		<!--自定义登录-->
+		<!--<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/static/**"/>
+			<mvc:exclude-mapping path="/user/tologin"/>
+			<mvc:exclude-mapping path="/user/login"/>
+			<mvc:exclude-mapping path="/user/logout"/>
+			<mvc:exclude-mapping path="/user/toregister"/>
+			<mvc:exclude-mapping path="/user/register"/>
+			<mvc:exclude-mapping path="/user/checkusername"/>
+			<mvc:exclude-mapping path="/user/checkemail"/>
+			<bean class="com.cristik.framework.interceptor.WebLoginInterceptor" />
+		</mvc:interceptor>-->
+		<!--自定义手机端登录-->
+		<!--<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/api/user/login"/>
+			<mvc:exclude-mapping path="/api/visitor/login"/>
+			<mvc:exclude-mapping path="/api/visitor/register"/>
+			<bean class="com.cristik.framework.interceptor.MobileLoginInterceptor" />
+		</mvc:interceptor>-->
+	</mvc:interceptors>
+	
+</beans>

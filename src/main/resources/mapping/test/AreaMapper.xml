@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cristik.modules.test.dao.AreaDao" >
+  <resultMap id="BaseResultMap" type="com.cristik.modules.test.entity.svo.Area" >
+      <id column="id" property="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="area_name" property="areaName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="en_name" property="enName" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="show_img" property="showImg" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="area_imgs" property="areaImgs" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <result column="parent_id" property="parentId" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <result column="type" property="type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+  </resultMap>
+
+  <select id="queryPage" parameterType="map" resultMap="BaseResultMap">
+    select * from area
+    <where>
+      <if test="area.id!=null">
+        and id = #{area.id,jdbcType=INTEGER}
+      </if>
+      <if test="area.areaName!=null and area.areaName!=''">
+        and area_name like concat("%",#{area.areaName,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="area.parentId!=null">
+        and parent_id = #{area.parentId,jdbcType=INTEGER}
+      </if>
+      <if test="area.type!=null">
+        and type = #{area.type,jdbcType=INTEGER}
+      </if>
+    </where>
+    limit #{start},#{length}
+  </select>
+
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer">
+    select count(*) from area
+    <where>
+      <if test="area.id!=null">
+        and id = #{area.id,jdbcType=INTEGER}
+      </if>
+      <if test="area.areaName!=null and area.areaName!=''">
+        and area_name like concat("%",#{area.areaName,jdbcType=VARCHAR},"%")
+      </if>
+      <if test="area.parentId!=null">
+        and parent_id = #{area.parentId,jdbcType=INTEGER}
+      </if>
+      <if test="area.type!=null">
+        and type = #{area.type,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+</mapper>

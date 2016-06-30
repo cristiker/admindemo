@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd    
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/jee
+                        http://www.springframework.org/schema/jee/spring-jee.xsd">
+    <!-- 扫描service组件 -->
+    <context:component-scan base-package="com.cristik.modules.test.service.impl;com.cristik.modules.api.service" />
+
+    <!-- 引入配置文件 -->
+    <bean id="dataSourcePropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="2"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations" value="classpath:mybatis/jdbc.properties" />
+    </bean>
+
+    <jee:jndi-lookup id="dataSource1" jndi-name="jdbc/DatabaseName" expected-type="javax.sql.DataSource" />
+
+    <!--org.apache.commons.dbcp2.BasicDataSource-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${mysql.driver}" />
+        <property name="url" value="${mysql.url}" />
+        <property name="username" value="${mysql.username}" />
+        <property name="password" value="${mysql.password}" />
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${initialSize}"/>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${maxActive}"/>
+        <!-- 连接池最大空闲 -->
+        <!--<property name="maxIdle" value="${maxIdle}"/>-->
+        <!-- 连接池最小空闲 -->  
+        <property name="minIdle" value="${minIdle}"/>
+        <!-- 获取连接最大等待时间 -->  
+        <property name="maxWait" value="${maxWait}"/>
+        <!-- druid监控拦截器 -->
+        <property name="filters" value="stat" />
+    </bean>  
+  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath:/mapping/*/*.xml"/>
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+    </bean>
+
+    <!-- 配置通用mapper -->
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.cristik.modules.test.dao;com.cristik.modules.api.dao"/>
+        <property name="properties" >
+            <value>
+                ORDER=AFTER
+                IDENTITY=MYSQL
+            </value>
+        </property>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+  
+    <!-- 扫描basePackage下所有以@MyBatis标识的接口-->
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.cristik.business.dao" />
+        <property name="annotationClass" value="com.cristik.framework.annotation.Mybatis"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>-->
+
+    <!-- 事务管理 -->
+    <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+</beans>  
